@@ -1,0 +1,26 @@
+---
+import { siteConfig } from "../config";
+import { withBase } from "../lib/projects";
+import Icon from "./Icon.astro";
+---
+<section class="hero container" aria-labelledby="hero-heading">
+  <div class="hero-copy">
+    <p class="eyebrow greeting"><span class="status-dot"></span>{siteConfig.hero.greeting}<span class="greeting-wave" aria-hidden="true">✳</span></p>
+    <h1 id="hero-heading">{siteConfig.hero.lineOne}<br /><span>{siteConfig.hero.lineTwo}</span></h1>
+    <p class="hero-description">{siteConfig.hero.description}</p>
+    <div class="hero-actions">
+      <a class="button button-primary" href="#projects">看看我的作品 <Icon /></a>
+      <a class="text-link" href="#about">认识一下 <span aria-hidden="true">↗</span></a>
+    </div>
+    <div class="hero-note"><span class="tiny-line"></span>一点好奇心，一些正在发生的创造。</div>
+  </div>
+  <div class="hero-art" aria-hidden="true">
+    <div class="art-orbit orbit-one"></div><div class="art-orbit orbit-two"></div>
+    <span class="art-cross cross-one">+</span><span class="art-cross cross-two">+</span>
+    <div class="idea-stamp"><span>✳</span><div>A LITTLE IDEA.<br />A NEW POSSIBILITY.</div></div>
+    <div class="sketch-card"><span class="mono">01 / THE IDEA</span><p>如果这个想法，<br />真的做出来呢？</p><span class="sketch-underline"></span><span class="sketch-spark">✧</span></div>
+    <div class="browser-card"><div class="browser-top"><i></i><i></i><i></i><span>from idea to reality</span><span class="browser-plus">+</span></div><img src={withBase("/images/hero-canvas.svg")} alt="" width="520" height="320" fetchpriority="high" /></div>
+    <div class="art-label"><span class="status-dot"></span>想法，正在成为作品。<span>↗</span></div>
+  </div>
+</section>
+<div class="container hero-bottom"><span>用作品记录成长</span><div><span>想法</span><span class="flow-line"></span><span>探索</span><span class="flow-line"></span><span>实现</span></div><a href="#projects" aria-label="向下浏览作品">SCROLL TO EXPLORE <span aria-hidden="true">↓</span></a></div>

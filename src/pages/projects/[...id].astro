@@ -1,0 +1,25 @@
+---
+import type { GetStaticPaths } from "astro";
+import { render, type CollectionEntry } from "astro:content";
+import { getProjects, withBase, projectUrl } from "../../lib/projects";
+import { siteConfig } from "../../config";
+import Layout from "../../layouts/Layout.astro";
+import Icon from "../../components/Icon.astro";
+export const getStaticPaths = (async () => (await getProjects()).map((project) => ({ params: { id: project.id }, props: { project } }))) satisfies GetStaticPaths;
+interface Props { project: CollectionEntry<"projects">; }
+const { project } = Astro.props;
+const { Content } = await render(project);
+const projects = await getProjects();
+const next = projects.length > 1 ? projects[(projects.findIndex((item) => item.id === project.id) + 1) % projects.length] : undefined;
+---
+<Layout title={`${project.data.title} · ${siteConfig.name}`} description={project.data.summary} noindex={project.data.sample}>
+  <article class="project-detail container">
+    <a class="back-link" href={`${withBase("")}#projects`}><span aria-hidden="true">←</span> 返回全部作品</a>
+    <div class="detail-heading"><p class="eyebrow">{project.data.category}<span>/</span>{project.data.sample ? "示例项目" : project.data.status}</p><h1>{project.data.title}</h1><p class="detail-summary">{project.data.summary}</p></div>
+    {project.data.sample && <aside class="detail-sample"><strong>这是一个布局示例。</strong> 内容仅用于展示项目详情页，并非付俊阳的真实项目或经历。</aside>}
+    <div class="detail-meta"><div><span>{project.data.sample ? "内容类型" : "项目日期"}</span><strong>{project.data.sample ? "演示内容" : project.data.date}</strong></div>{project.data.role && <div><span>我的角色</span><strong>{project.data.role}</strong></div>}<div><span>{project.data.sample ? "示例技术标签" : "技术与工具"}</span><ul class="tags">{project.data.tags.map((tag) => <li>{tag}</li>)}</ul></div><div class="detail-actions">{project.data.demoUrl && <a class="button button-primary" href={project.data.demoUrl} target="_blank" rel="noopener noreferrer">在线体验 <Icon name="external" /></a>}{project.data.repoUrl && <a class="button button-secondary" href={project.data.repoUrl} target="_blank" rel="noopener noreferrer"><Icon name="github" /> 查看源码</a>}</div></div>
+    <img class="detail-cover" src={withBase(project.data.cover)} alt={project.data.coverAlt} width="1200" height="760" />
+    <div class="prose"><Content /></div>
+    {next && <a class="next-project" href={projectUrl(next.id)}><div><span class="eyebrow">NEXT PROJECT</span><h2>{next.data.title}</h2></div><Icon /></a>}
+  </article>
+</Layout>

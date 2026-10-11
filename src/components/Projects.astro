@@ -1,0 +1,68 @@
+---
+import { getProjects, projectUrl, withBase } from "../lib/projects";
+import Icon from "./Icon.astro";
+const projects = await getProjects();
+const categories = [...new Set(projects.map((project) => project.data.category))];
+const samplesOnly = projects.length > 0 && projects.every((project) => project.data.sample);
+---
+<section class="projects-section section container" id="projects" aria-labelledby="projects-heading">
+  <div class="section-top"><p class="eyebrow"><span class="section-number">01 /</span> SELECTED WORK</p><span class="section-aside">每一个想法，都有自己的可能。</span></div>
+  <div class="section-heading"><h2 id="projects-heading">从想法，到作品<span class="heading-dot">。</span></h2><span class="project-total mono">{String(projects.length).padStart(2, "0")} {samplesOnly ? "DEMO PROJECTS" : "PROJECTS"}</span></div>
+  {samplesOnly && <p class="sample-notice"><span>预览说明</span> 以下为示例内容，仅展示作品集布局。</p>}
+  <div class="project-tools" hidden>
+    <div class="filters" role="group" aria-label="按项目分类筛选">
+      <button type="button" class="filter active" data-filter="all" aria-pressed="true">全部作品 <span>{projects.length}</span></button>
+      {categories.map((category) => <button type="button" class="filter" data-filter={category} aria-pressed="false">{category}<span>{projects.filter((project) => project.data.category === category).length}</span></button>)}
+    </div>
+    <label class="project-search"><Icon name="search" /><span class="sr-only">搜索项目名称、介绍或技术</span><input type="search" placeholder="搜索项目或技术…" id="project-search" autocomplete="off" /><kbd aria-hidden="true">/</kbd></label>
+  </div>
+  <p class="sr-only" id="search-status" aria-live="polite" aria-atomic="true"></p>
+  <div class="project-grid">
+    {projects.map((project, index) => <article class:list={["project-card", { "featured": index === 0 && project.data.featured }]} data-project data-category={project.data.category} data-search={`${project.data.title} ${project.data.summary} ${project.data.tags.join(" ")}`.toLocaleLowerCase()}>
+      <a class="project-visual" href={project.data.demoUrl || projectUrl(project.id)} target={project.data.demoUrl ? "_blank" : undefined} rel={project.data.demoUrl ? "noopener noreferrer" : undefined} tabindex="-1" aria-hidden="true">
+        <img src={withBase(project.data.cover)} alt={project.data.coverAlt} width="1200" height="760" loading="lazy" />
+        <span class="visual-tag">{project.data.sample ? "示例项目" : project.data.status}</span>
+        <span class="visual-arrow"><Icon name="external" /></span>
+      </a>
+      <div class="project-info">
+        <div class="project-kicker"><span>{project.data.featured ? "精选项目" : project.data.category}</span><span class="mono">{String(index + 1).padStart(2, "0")} / {project.data.sample ? "DEMO" : project.data.date.slice(0, 4)}</span></div>
+        <h3><a href={projectUrl(project.id)}>{project.data.title}</a></h3>
+        <p>{project.data.summary}</p>
+        <ul class="tags" aria-label="项目技术标签">{project.data.tags.map((tag) => <li>{tag}</li>)}</ul>
+        <div class="project-links">{project.data.demoUrl && <a class="try-link" href={project.data.demoUrl} target="_blank" rel="noopener noreferrer">立即体验 <Icon name="external" /></a>}<a href={projectUrl(project.id)} class:list={[{ "case-link": !project.data.demoUrl }]}>{project.data.sample ? "查看布局示例" : "项目介绍"}<Icon /></a>{project.data.repoUrl && <a href={project.data.repoUrl} target="_blank" rel="noopener noreferrer" aria-label={`${project.data.title}的源码`}><Icon name="github" /></a>}</div>
+      </div>
+    </article>)}
+  </div>
+  <div class="empty-state" id="no-results" hidden><span aria-hidden="true">⌕</span><h3>暂时没有匹配的项目</h3><p>换个关键词，或者查看全部作品。</p><button type="button" class="button button-secondary" id="reset-filters">查看全部作品 <Icon /></button></div>
+  {projects.length === 0 && <div class="empty-state"><h3>第一个想法，正在酝酿。</h3><p>新的作品会在这里与你见面。</p></div>}
+  <div class="more-to-come"><span class="more-icon"><Icon name="plus" /></span><p>还有一些想法，正在路上。<span>更多作品会陆续出现在这里。</span></p><span class="mono">TO BE CONTINUED…</span></div>
+</section>
+<script>
+  const tools = document.querySelector<HTMLElement>(".project-tools");
+  const buttons = [...document.querySelectorAll<HTMLButtonElement>("[data-filter]")];
+  const cards = [...document.querySelectorAll<HTMLElement>("[data-project]")];
+  const search = document.querySelector<HTMLInputElement>("#project-search");
+  const empty = document.querySelector<HTMLElement>("#no-results");
+  const status = document.querySelector<HTMLElement>("#search-status");
+  let selected = "all";
+  if (tools && cards.length) tools.hidden = false;
+  function updateProjects() {
+    const term = search?.value.trim().toLocaleLowerCase() || "";
+    let count = 0;
+    cards.forEach((card) => {
+      const visible = (selected === "all" || card.dataset.category === selected) && (card.dataset.search || "").includes(term);
+      card.hidden = !visible;
+      if (visible) count++;
+    });
+    buttons.forEach((button) => { const active = button.dataset.filter === selected; button.classList.toggle("active", active); button.setAttribute("aria-pressed", String(active)); });
+    if (empty) empty.hidden = count > 0;
+    if (status) status.textContent = `显示 ${count} 个项目`;
+  }
+  buttons.forEach((button) => button.addEventListener("click", () => { selected = button.dataset.filter || "all"; updateProjects(); }));
+  search?.addEventListener("input", updateProjects);
+  document.querySelector("#reset-filters")?.addEventListener("click", () => { selected = "all"; if (search) search.value = ""; updateProjects(); search?.focus(); });
+  document.addEventListener("keydown", (event) => {
+    const target = event.target as HTMLElement;
+    if (event.key === "/" && !event.ctrlKey && !event.metaKey && !event.altKey && !["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName) && !target.isContentEditable) { event.preventDefault(); search?.focus(); }
+  });
+</script>

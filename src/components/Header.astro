@@ -1,0 +1,40 @@
+---
+import { siteConfig } from "../config";
+import { withBase } from "../lib/projects";
+import Icon from "./Icon.astro";
+const { home = false } = Astro.props;
+const anchor = (id: string) => home ? `#${id}` : `${withBase("")}#${id}`;
+---
+<header class="site-header">
+  <nav class="container nav" aria-label="主导航">
+    <a class="brand" href={withBase("")} aria-label={`${siteConfig.name}，返回首页`}>
+      <span class="brand-mark">f<span>.</span></span>
+      <span class="brand-name">{siteConfig.name}<span class="brand-caption">PERSONAL PORTFOLIO</span></span>
+    </a>
+    <button class="menu-toggle" aria-label="打开导航" aria-controls="nav-links" aria-expanded="false"><span></span><span></span></button>
+    <div class="nav-links" id="nav-links">
+      <a href={anchor("projects")} class:list={["nav-link", { "is-active": home }]}><span class="nav-dot"></span>作品</a>
+      <a href={anchor("about")} class="nav-link">关于我</a>
+      {siteConfig.resume && <a class="nav-link" href={withBase(siteConfig.resume)} target="_blank" rel="noopener noreferrer">简历 <Icon name="external" /></a>}
+      <a href={anchor("contact")} class="nav-contact">聊一聊 <Icon name="external" /></a>
+    </div>
+  </nav>
+</header>
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>(".menu-toggle");
+  const links = document.querySelector<HTMLElement>(".nav-links");
+  const closeMenu = () => {
+    toggle?.setAttribute("aria-expanded", "false");
+    toggle?.setAttribute("aria-label", "打开导航");
+    links?.classList.remove("is-open");
+  };
+  toggle?.addEventListener("click", () => {
+    const expanded = toggle.getAttribute("aria-expanded") !== "true";
+    toggle.setAttribute("aria-expanded", String(expanded));
+    toggle.setAttribute("aria-label", expanded ? "关闭导航" : "打开导航");
+    links?.classList.toggle("is-open", expanded);
+  });
+  links?.querySelectorAll("a").forEach((link) => link.addEventListener("click", closeMenu));
+  document.addEventListener("keydown", (event) => { if (event.key === "Escape" && toggle?.getAttribute("aria-expanded") === "true") { closeMenu(); toggle.focus(); } });
+  document.addEventListener("click", (event) => { if (event.target instanceof Node && !document.querySelector(".site-header")?.contains(event.target)) closeMenu(); });
+</script>
