@@ -10,7 +10,7 @@ const hasContact = Boolean(phone || siteConfig.social.email || siteConfig.social
   <div class="contact-actions">
     {phone && <a class="button button-primary contact-phone" href={phoneHref} aria-label={`拨打电话 ${phone}`}><Icon name="phone" /><span><span class="contact-phone-label">电话联系</span><span class="contact-phone-number">{phone}</span></span></a>}
     {siteConfig.social.email && <a class:list={["button", phone ? "button-secondary" : "button-primary"]} href={`mailto:${siteConfig.social.email}`}>给我发邮件 <Icon name="mail" /></a>}
-    {siteConfig.social.github && <a class="contact-github" href={siteConfig.social.github} target="_blank" rel="noopener noreferrer"><Icon name="github" /> GitHub <Icon name="external" /></a>}
+    {siteConfig.social.weixin && <a class="contact-weixin" href={siteConfig.social.weixin} target="_blank" rel="noopener noreferrer"><Icon name="weixin" /> weixin <Icon name="external" /></a>}
     {!hasContact && <span class="contact-flower" aria-hidden="true">✳</span>}
   </div>
 </section>
