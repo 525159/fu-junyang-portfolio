@@ -22,8 +22,8 @@ export const siteConfig = {
   },
   social: {
     phone: "15829980910",
-    email: "",
-    github: "",
+    email: "2695833168@qq.com",
+    weixin: "F2695833168",
   },
   // 把 PDF 放入 public/resume.pdf，然后填写 "/resume.pdf"。
   resume: "",
