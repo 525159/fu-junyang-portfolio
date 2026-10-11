@@ -1,10 +1,29 @@
 ---
 import { siteConfig } from "../config";
 import Icon from "./Icon.astro";
-const hasContact = Boolean(siteConfig.social.email || siteConfig.social.github);
+const phone = siteConfig.social.phone.trim();
+const phoneHref = `tel:${phone.replace(/[^+\d]/g, "")}`;
+const hasContact = Boolean(phone || siteConfig.social.email || siteConfig.social.github);
 ---
 <section class="contact-section container" id="contact" aria-labelledby="contact-heading">
   <div><p class="eyebrow">LET’S CONNECT</p><h2 id="contact-heading">下一个可能，<br class="mobile-break" />从一次交流开始<span>↗</span></h2><p>{hasContact ? "关于作品、想法，或一个新的机会，都欢迎聊聊。" : "感谢你来看看我的小小世界。联系方式即将补充。"}</p></div>
-  <div class="contact-actions">{siteConfig.social.email && <a class="button button-primary" href={`mailto:${siteConfig.social.email}`}>给我发邮件 <Icon name="mail" /></a>}{siteConfig.social.github && <a class="contact-github" href={siteConfig.social.github} target="_blank" rel="noopener noreferrer"><Icon name="github" /> GitHub <Icon name="external" /></a>}{!hasContact && <span class="contact-flower" aria-hidden="true">✳</span>}</div>
+  <div class="contact-actions">
+    {phone && <a class="button button-primary contact-phone" href={phoneHref} aria-label={`拨打电话 ${phone}`}><Icon name="phone" /><span><span class="contact-phone-label">电话联系</span><span class="contact-phone-number">{phone}</span></span></a>}
+    {siteConfig.social.email && <a class:list={["button", phone ? "button-secondary" : "button-primary"]} href={`mailto:${siteConfig.social.email}`}>给我发邮件 <Icon name="mail" /></a>}
+    {siteConfig.social.github && <a class="contact-github" href={siteConfig.social.github} target="_blank" rel="noopener noreferrer"><Icon name="github" /> GitHub <Icon name="external" /></a>}
+    {!hasContact && <span class="contact-flower" aria-hidden="true">✳</span>}
+  </div>
 </section>
 <footer class="site-footer container"><span>© {new Date().getFullYear()} {siteConfig.name}</span><span class="footer-note">保持好奇，把想法做出来。</span><a href="https://github.com/RyanFitzgerald/devportfolio" target="_blank" rel="noopener noreferrer">基于 DevPortfolio <span aria-hidden="true">↗</span></a></footer>
+
+<style>
+  .contact-actions { flex-shrink: 0; }
+  .contact-phone { gap: 14px; text-align: left; }
+  .contact-phone-label { display: block; font-size: 10px; opacity: .8; }
+  .contact-phone-number { display: block; font-size: 18px; letter-spacing: .6px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  @media (max-width: 640px) {
+    .contact-section { flex-direction: column; align-items: flex-start; }
+    .contact-actions:has(.button) { align-self: flex-start; align-items: flex-start; }
+    .contact-actions .contact-phone { padding: 11px 16px; gap: 12px; }
+  }
+</style>

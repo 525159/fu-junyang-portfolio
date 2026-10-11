@@ -1,4 +1,4 @@
-// 个人资料只需要在这里修改。未填写的邮箱、GitHub、简历入口会自动隐藏。
+// 个人资料只需要在这里修改。未填写的电话、邮箱、GitHub、简历入口会自动隐藏。
 export const siteConfig = {
   name: "付俊阳",
   initials: "FJY",
@@ -21,6 +21,7 @@ export const siteConfig = {
     interests: ["发现问题", "动手实践", "持续改进"],
   },
   social: {
+    phone: "15829980910",
     email: "",
     github: "",
   },

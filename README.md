@@ -4,6 +4,8 @@
 
 源码仓库：[525159/fu-junyang-portfolio](https://github.com/525159/fu-junyang-portfolio)。提交到默认分支后，GitHub Actions 会自动构建并发布到 GitHub Pages。
 
+第一次维护网站，可以先看 [网站维护演示](网站维护演示.md)：以添加手机号为例，说明怎样在 GitHub 修改联系方式和新增项目，无需安装软件。
+
 基于 [RyanFitzgerald/devportfolio](https://github.com/RyanFitzgerald/devportfolio) 改造的中文个人作品集。沿用 Astro、Tailwind CSS、组件划分与个人信息集中配置，重新设计视觉和项目展示，并增加 Markdown 项目详情、搜索、分类、草稿、样例自动隐藏等功能。
 
 ## 先看网站
@@ -88,6 +90,7 @@ status: "已上线"
 编辑 `src/config.ts`：
 
 - 名字、首页文字和个人介绍。
+- `social.phone`：填写手机号后，底部显示电话联系按钮；手机点击会打开拨号界面。清空为 `""` 可隐藏。
 - `social.email`：填写真实邮箱后，底部会出现发邮件按钮。
 - `social.github`：填写完整的个人 GitHub 地址后，显示 GitHub 入口。
 - `resume`：将简历 PDF 放到 `public/resume.pdf`，再填 `"/resume.pdf"`，导航和关于区域自动显示简历入口。
