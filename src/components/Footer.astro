@@ -3,7 +3,7 @@ import { siteConfig } from "../config";
 import Icon from "./Icon.astro";
 const phone = siteConfig.social.phone.trim();
 const phoneHref = `tel:${phone.replace(/[^+\d]/g, "")}`;
-const hasContact = Boolean(phone || siteConfig.social.email || siteConfig.social.github);
+const hasContact = Boolean(phone || siteConfig.social.email || siteConfig.social.weixin);
 ---
 <section class="contact-section container" id="contact" aria-labelledby="contact-heading">
   <div><p class="eyebrow">LET’S CONNECT</p><h2 id="contact-heading">下一个可能，<br class="mobile-break" />从一次交流开始<span>↗</span></h2><p>{hasContact ? "关于作品、想法，或一个新的机会，都欢迎聊聊。" : "感谢你来看看我的小小世界。联系方式即将补充。"}</p></div>
