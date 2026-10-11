@@ -1,4 +1,4 @@
-// 个人资料只需要在这里修改。未填写的电话、邮箱、GitHub、简历入口会自动隐藏。
+// 个人资料只需要在这里修改。未填写的电话、邮箱、微信、简历入口会自动隐藏。
 export const siteConfig = {
   name: "付俊阳",
   initials: "FJY",
@@ -21,8 +21,10 @@ export const siteConfig = {
     interests: ["发现问题", "动手实践", "持续改进"],
   },
   social: {
+    // 只修改引号里的内容，保留 phone、email、weixin 字段名。留空 "" 即可隐藏。
     phone: "15829980910",
     email: "2695833168@qq.com",
+    // 微信号不是网址；页面会显示号码并提供复制按钮。
     weixin: "F2695833168",
   },
   // 把 PDF 放入 public/resume.pdf，然后填写 "/resume.pdf"。

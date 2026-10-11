@@ -1,29 +1,64 @@
 ---
 import { siteConfig } from "../config";
 import Icon from "./Icon.astro";
-const phone = siteConfig.social.phone.trim();
+const phone = siteConfig.social.phone?.trim() || "";
+const email = siteConfig.social.email?.trim() || "";
+const weixin = siteConfig.social.weixin?.trim() || "";
 const phoneHref = `tel:${phone.replace(/[^+\d]/g, "")}`;
-const hasContact = Boolean(phone || siteConfig.social.email || siteConfig.social.weixin);
+const hasContact = Boolean(phone || email || weixin);
 ---
 <section class="contact-section container" id="contact" aria-labelledby="contact-heading">
   <div><p class="eyebrow">LET’S CONNECT</p><h2 id="contact-heading">下一个可能，<br class="mobile-break" />从一次交流开始<span>↗</span></h2><p>{hasContact ? "关于作品、想法，或一个新的机会，都欢迎聊聊。" : "感谢你来看看我的小小世界。联系方式即将补充。"}</p></div>
   <div class="contact-actions">
     {phone && <a class="button button-primary contact-phone" href={phoneHref} aria-label={`拨打电话 ${phone}`}><Icon name="phone" /><span><span class="contact-phone-label">电话联系</span><span class="contact-phone-number">{phone}</span></span></a>}
-    {siteConfig.social.email && <a class:list={["button", phone ? "button-secondary" : "button-primary"]} href={`mailto:${siteConfig.social.email}`}>给我发邮件 <Icon name="mail" /></a>}
-    {siteConfig.social.weixin && <a class="contact-weixin" href={siteConfig.social.weixin} target="_blank" rel="noopener noreferrer"><Icon name="weixin" /> weixin <Icon name="external" /></a>}
+    {email && <a class:list={["button", phone ? "button-secondary" : "button-primary"]} href={`mailto:${email}`}>给我发邮件 <Icon name="mail" /></a>}
+    {weixin && <div class="contact-weixin" data-weixin-contact>
+      <span class="weixin-heading"><Icon name="weixin" /> 微信联系</span>
+      <span class="weixin-id">{weixin}</span>
+      <button class="weixin-copy" type="button" data-copy-weixin={weixin} hidden>复制微信号</button>
+      <p class="weixin-help" role="status" aria-live="polite" data-weixin-status>在微信「添加朋友」中搜索</p>
+    </div>}
     {!hasContact && <span class="contact-flower" aria-hidden="true">✳</span>}
   </div>
 </section>
 <footer class="site-footer container"><span>© {new Date().getFullYear()} {siteConfig.name}</span><span class="footer-note">保持好奇，把想法做出来。</span><a href="https://github.com/RyanFitzgerald/devportfolio" target="_blank" rel="noopener noreferrer">基于 DevPortfolio <span aria-hidden="true">↗</span></a></footer>
 
+<script>
+  document.querySelectorAll<HTMLButtonElement>("[data-copy-weixin]").forEach((button) => {
+    const status = button.closest("[data-weixin-contact]")?.querySelector<HTMLElement>("[data-weixin-status]");
+    button.hidden = false;
+    button.addEventListener("click", async () => {
+      const weixin = button.dataset.copyWeixin;
+      if (!weixin) return;
+      button.disabled = true;
+      try {
+        await navigator.clipboard.writeText(weixin);
+        if (status) status.textContent = "已复制，请在微信「添加朋友」中粘贴搜索。";
+      } catch {
+        if (status) status.textContent = "复制未成功，请长按或选中上方微信号复制。";
+      } finally {
+        button.disabled = false;
+      }
+    });
+  });
+</script>
+
 <style>
-  .contact-actions { flex-shrink: 0; }
+  .contact-actions { flex-shrink: 0; width: 248px; max-width: 100%; align-items: stretch; }
   .contact-phone { gap: 14px; text-align: left; }
   .contact-phone-label { display: block; font-size: 10px; opacity: .8; }
   .contact-phone-number { display: block; font-size: 18px; letter-spacing: .6px; font-variant-numeric: tabular-nums; white-space: nowrap; }
-  @media (max-width: 640px) {
+  .contact-weixin { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px; border: 1px solid #c8d4be; border-radius: 7px; background: #f7f9f3; color: var(--green); text-align: center; }
+  .weixin-heading { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; }
+  .weixin-id { max-width: 100%; font-size: 18px; font-weight: 600; overflow-wrap: anywhere; user-select: all; }
+  .weixin-copy { min-height: 36px; padding: 7px 15px; border: 1px solid #bdcbb2; border-radius: 5px; background: transparent; color: var(--green); font-size: 12px; }
+  .weixin-copy:hover { background: var(--green-light); }
+  .contact-section .weixin-help { max-width: 100%; margin: 0; font-size: 10px; line-height: 1.8; }
+  @media (max-width: 800px) {
     .contact-section { flex-direction: column; align-items: flex-start; }
-    .contact-actions:has(.button) { align-self: flex-start; align-items: flex-start; }
+    .contact-actions:has(.button) { align-self: flex-start; align-items: stretch; }
+  }
+  @media (max-width: 640px) {
     .contact-actions .contact-phone { padding: 11px 16px; gap: 12px; }
   }
 </style>
